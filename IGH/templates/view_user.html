@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>HTML Forms</h2>
+user: {{user}}
+<form action=""  method="post" >
+  First name:<br>
+  <input type="text" name="email" value="{{user_details['email']}}" readonly>
+  <br>
+  <input type="text" name="name" value="{{user_details['name']}}">
+  <br>
+  <input type="text" name="dob" value="{{user_details['dob']}}">
+  Last name:<br>
+  <input type="text" name="hobby" value="{{user_details['hobby']}}">
+  <br><br>
+  <input type="submit" value="Submit">
+</form> 
+
+<p>If you click the "Submit" button, the form-data will be sent to a page called "/action_page.php".</p>
+
+</body>
+</html>
+
