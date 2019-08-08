@@ -5,7 +5,7 @@ from werkzeug.utils import secure_filename
 
 from flask_mysqldb import MySQL
 
-from packages.dbconnect import connection, get_table_list, get_column_list
+from packages.dbconnect import connection, get_table_list, get_column_dict
 
 from flask import jsonify
 app = Flask(__name__, instance_relative_config=True)
@@ -32,9 +32,9 @@ def init():
     print("-------------------------")
     print("DB connection established")
     table_names = get_table_list(cursor)
-    table_cols_dist = get_column_list(cursor, table_names)
+    table_cols_dist = get_column_dict(cursor, table_names)
     print("-------------------------")
-    #print(table_names,table_cols_dist)
+    print(table_names,table_cols_dist)
    
     cursor.close()
     conn.close()
@@ -46,10 +46,12 @@ def init():
 
 @app.route('/rough' , methods=['GET', 'POST'])
 def rough():
-    #cur = mysql.connection.cursor()
+    cur = mysql.connection.cursor()
     #cur.execute("SELECT table_name FROM information_schema.tables WHERE table_schema='IGH_DATABASE' ")
-    #cur.execute("SELECT COLUMN_NAME FROM information_schema.columns WHERE table_name='User_Details' ")
-    #tables = cur.fetchall()
+    cur.execute("SELECT COLUMN_NAME, DATA_TYPE FROM information_schema.columns WHERE table_name='User_Credentials'")
+    #cur.execute("SELECT * FROM User_Credentials")
+    tables = cur.fetchall()
+    print (tables)
     #print(len(table_names))
     #print(request.form)
     
@@ -118,7 +120,7 @@ def view_user(user='ram'):
         print(request.form.keys())
     else:  # get req load data in the html page when loading
         user_details={'email':'aa@gmail.com','name':'aakash','dob':'12-10-1995','hobby':'anime'}
-        return render_template('edit_profile.html',(user_details= user_details,user=user)) #view
+        return render_template('edit_profile.html',user_details= user_details,user=user) #view
 
 
 
