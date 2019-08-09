@@ -1,14 +1,16 @@
 import os
 
-from flask import Flask, request, redirect, url_for, render_template, send_from_directory
+from flask import Flask, session, request, redirect, url_for, render_template, send_from_directory
 from werkzeug.utils import secure_filename
 
 from flask_mysqldb import MySQL
 
-from packages.dbconnect import connection, get_table_list, get_column_dict
+from packages.dbconnect import connection, get_table_list, get_column_dict , generate_sql_query
 
 from flask import jsonify
+
 app = Flask(__name__, instance_relative_config=True)
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 app.config["DEBUG"] = True
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
@@ -23,21 +25,32 @@ mysql = MySQL(app)
  #   cur = mysql.connection.cursor()
   #  get_table_list(cur)
 
-table_names=[]
+table_names=[]  # ['User_Credentials', 'User_Details']
 table_cols_dist={}
-email=""
+#print("flask initialised")
+cursor, conn = connection()
+print("-------------------------")
+print("DB connection established")
+table_names = get_table_list(cursor)
+table_cols_dist = get_column_dict(cursor, table_names)
+cursor.close()
+conn.close()
+#email=""
+
 def init():
     print("flask initialised")
-    cursor, conn = connection()
-    print("-------------------------")
-    print("DB connection established")
-    table_names = get_table_list(cursor)
-    table_cols_dist = get_column_dict(cursor, table_names)
+    #cursor, conn = connection()
+    #print("-------------------------")
+    #print("DB connection established")
+    #table_names= get_table_list(cursor)
+    #table_cols_dist_var = get_column_dict(cursor, table_names)
+    #session['table_names_var'] = table_names
+    #session['table_cols_dist_var'] = table_cols_dist
     print("-------------------------")
     print(table_names,table_cols_dist)
    
-    cursor.close()
-    conn.close()
+    #cursor.close()
+    #conn.close()
     return
 
 
@@ -73,29 +86,122 @@ def rough():
 @app.route('/login', methods=['GET', 'POST'])#controller
 def login():
     error = None
-    if request.method == 'POST':
-
-        if request.form['username'] != 'admin' or request.form['password'] != 'admin':
-            error = 'Invalid Credentials. Please try again.'
-            print(request.form.keys())
-            return render_template('login.html', username = 'rajjj')
+    table='User_Credentials'
+    
+    cur = mysql.connection.cursor()
+    #print('---------------------',table_names,table_cols_dist)
+   
+    if 'email' in session:
+        if session['privilege'] == 'admin':
+            #return render_template('home_admin.html')
+            return redirect(url_for('home_admin')) #using redirect also udate the url
         else:
             
             return redirect(url_for('home'))
+
+    condition_dict={}
+    if request.method == 'POST': 
+        
+
+        condition_dict['email'] = request.form['email']
+        cols_dict=table_cols_dist[table]
+        
+        query= generate_sql_query(cols_dict, condition_dict,'SELECT', table, cols_dict)
+       
+        cur.execute(query)
+
+        result= cur.fetchall()
+        print("-----------------",result)
+        if len(result) == 0:
+            error= "This User doesn't exist"
+            return render_template('login.html',error=error)
+        if request.form['email'] == result[0]['email']  and request.form['password'] == result[0]['password']:
+            session['email'] = request.form['email']
+            session['privilege'] = result[0]['privilege']
+            if session['privilege']=='admin':
+                #return render_template('home_admin.html' )
+                return redirect(url_for('home_admin'))
+            else:
+                return redirect(url_for('home'))
+        else:
+            return render_template('login.html',email= request.form['email'],password='',error='User OR password is worng')
+    else:  
+        #return redirect(url_for('login'))
+        return render_template('login.html')
+
     return render_template('login.html', error=error)
 
 
-@app.route('/home', methods=['GET', 'POST'])#controller
-def home():
-    
+@app.route('/logout')  
+def logout():  
+    if 'email' in session:  
+        session.pop('email',None)
+        session.pop('privilege',None) 
+        return redirect(url_for('login')) 
+        #return render_template('login.html');  
+     
+    return redirect(url_for('login'))
+   
+
+
+
+@app.route('/home_admin', methods=['GET', 'POST'])#controller
+def home_admin():
+
+    if 'email' in session:
+        if session['privilege'] != 'admin':
+            #return render_template('home_admin.html')
+            return redirect(url_for('home')) #using redirect also udate the url
+    else:
+            
+         return redirect(url_for('login'))
+
     if request.method == 'POST':
 ##################
         print("hello")
 
     else:  # get req load data in the html page when loading
         #user_details={'email':'aa@gmail.com','name':'aakash','dob':'12-10-1995','hobby':'anime'}
-        return render_template('home.html', name= 'Aakash') #view
+        return render_template('home_admin.html', name= session['email']) #view
 
+
+@app.route('/create_new_user', methods=['GET', 'POST'])#controller
+def create_new_user():
+    error = None
+    value_dict={}
+    db = mysql.connection
+    cur= db.cursor()
+    #table='User_Credentials'
+    if 'email' in session:
+        if session['privilege'] != 'admin':
+            #return render_template('home_admin.html')
+            return redirect(url_for('home')) #using redirect also udate the url
+    else:   
+         return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        # for User_Credential table
+        cols_dict=table_cols_dist['User_Credentials']
+        value_dict['email'] = request.form['email']
+        query= generate_sql_query(request.form,{},'INSERT', 'User_Credentials', cols_dict)
+        print('-------------------------------------', query)
+        cur.execute(query)
+        db.commit()
+        #print( cur.fetchall() )
+        #for User_Details tables
+        print('-------------aaaa--------')
+        cols_dict=table_cols_dist['User_Details']
+        query= generate_sql_query(value_dict,{},'INSERT', 'User_Details', cols_dict)
+        cur.execute(query)
+        db.commit()
+        #print( cur.fetchall() )
+        #return redirect( url_for('view_user'))
+        return render_template('create_new_user.html')
+        
+    
+    return render_template('create_new_user.html')
+    #return redirect(url_for('create_new_user'))
+    
 
 @app.route('/user_details')#controller
 def user_details():

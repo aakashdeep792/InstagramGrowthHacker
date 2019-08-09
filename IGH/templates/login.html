@@ -10,8 +10,8 @@
       <h1>Please login</h1>
       <br>
       <form action="{{ url_for('login') }}" method="post">
-        <input type="text" placeholder="Username" name="username" >
-         <input type="password" placeholder="Password" name="password" >
+        Email: <input type="text" placeholder="Email" name="email" {% if email %} value= "{{ email }}" {% endif %} >
+         Password: <input type="password" placeholder="Password" name="password" >
          
         <input class="btn btn-default" type="submit" value="Login">
       </form>

@@ -72,7 +72,7 @@ def get_column_dict(cursor,table_names):
 #           generate_sql_query
 ################################################
 def generate_sql_query(cols_dict , condition_dict, query_type, table, column_type):
-    query="' "
+    query=" "
     query_condn=''
     length= len(cols_dict)
     
@@ -85,12 +85,12 @@ def generate_sql_query(cols_dict , condition_dict, query_type, table, column_typ
             query += " "
         query += 'FROM ' + table
         
-    ################################################
-    #           INSERT 
-    ################################################    
+        ########################################
+        #           INSERT 
+        ########################################
             
     if query_type == 'INSERT' :
-        v#alues=''
+        values=''
         query += 'INSERT INTO '+ table+' ('
         values= ' VALUES ( '
         for (i,col) in enumerate(cols_dict.keys()):
@@ -102,13 +102,16 @@ def generate_sql_query(cols_dict , condition_dict, query_type, table, column_typ
                 
             if( i< length-1):
                 query += ','
+                values+= ','
             query += " "
         values += ')'
         query += ')'
         query+=values
-    ################################################
-    #           UPDATE 
-    ################################################    
+
+
+        ################################################
+        #           UPDATE 
+        ################################################    
     if query_type == 'UPDATE' :
         query += 'UPDATE ' + table + ' SET '
         for (i, col) in enumerate(cols_dict.keys()):
@@ -120,14 +123,15 @@ def generate_sql_query(cols_dict , condition_dict, query_type, table, column_typ
             if i< length-1 :
                 query += ', '
      
-    ################################################
-    #           DELETE
-    ################################################           
+        ################################################
+        #           DELETE
+        ################################################           
     if query_type == 'DELETE' :
         query += 'DELETE FROM ' + table
-    ################################################
-    #           WHERE 
-    ################################################
+
+        ################################################
+        #           WHERE 
+        ################################################
     if query_type!='INSERT' and len(condition_dict) != 0:
             
         query_condn = query_condn + ' WHERE '
@@ -139,8 +143,10 @@ def generate_sql_query(cols_dict , condition_dict, query_type, table, column_typ
                 query_condn = query_condn + col + " = '" + condition_dict[col] + "'"
             if i< length-1 :
                 query_condn += ' AND '
-    query_condn += "'"
+    #query_condn += "'"
             
     return query + query_condn
 
-#connection()
+################################################
+#           --------END--------
+################################################

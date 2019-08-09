@@ -7,21 +7,26 @@
   </head>
   <body>
     <div class="container">
-      <h1>Please login</h1>
+      <h1>Create User</h1>
       <br>
       <form action="" method="post">
-        <input type="text" placeholder="Username" name="username" >
-         <input type="password" placeholder="Password" name="password" >
-          <select name="privilege">
+        <br>
+        User: <input type="text" placeholder="email" name="email" >
+         <br><br>
+        Password: <input type="password" placeholder="Password" name="password" >
+           <br><br>
+         <select name="privilege">
   		<option value="guest">Guest</option>
   		<option value="admin">Admin</option>
 	</select>
-        <input class="btn btn-default" type="submit" value="Login">
-      </form>   
+         <br><br><br>
+        <input class="btn btn-default" type="submit" value="Create">
+      </form>  
+       <br> <br> <br> <br>
       {% if message %}
          {{ message }}
       {% endif %}
-
+       <br><br>
       {% if error %}
         <p class="error"><strong>Error:</strong> {{ error }}
       {% endif %}
