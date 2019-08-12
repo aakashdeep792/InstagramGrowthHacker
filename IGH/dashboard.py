@@ -245,12 +245,14 @@ def user_profile(email):
     
     
     #verify login:
-    if 'email' in session:
-        if session['privilege'] != 'admin':
-            return redirect(url_for('home')) #using redirect also udate the url
-    else:   
-         return redirect(url_for('login'))
+    if 'email' not in session:
+        return redirect(url_for('login'))
 
+        
+    if session['privilege'] == 'admin' or session['email'] == email : # work for both admin and guest     
+        print('working')
+    else:
+        return redirect(url_for('login')) #using redirect also udate the url
 
     # user profie section
     error =''
@@ -414,9 +416,26 @@ def edit_credential(email):
     else: 
         error="Unauthorized action"
         return redirect(url_for('login'))
-    
- 
-   
+#####################################################################
+####      home (guest)
+#####################################################################    
+@app.route('/home', methods=['GET', 'POST'])#controller
+def home():
+
+    if 'email' in session:
+        if session['privilege'] == 'admin':
+            return redirect(url_for('home_admin')) #using redirect also udate the url
+    else:    
+         return redirect(url_for('login'))
+
+    if request.method == 'POST':
+     ######
+        print("hello")
+
+    else:  # get req load data in the html page when loading
+        #user_details={'email':'aa@gmail.com','name':'aakash','dob':'12-10-1995','hobby':'anime'}
+        return render_template('home.html', email = session['email']) #view
+  
 
 
 @app.route('/add_insta_profile', methods=['GET', 'POST'])#controller
@@ -461,7 +480,7 @@ if __name__ == "__main__":
         "please wait until server has fully started"))
     init()
     
-    port = int(os.environ.get("PORT", 5000))
+    port = int(os.environ.get("PORT", 5010))
     app.run(threaded=True,host='127.0.0.1', port=port)
 
 
