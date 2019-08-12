@@ -116,9 +116,9 @@ def generate_sql_query(cols_dict , condition_dict, query_type, table, column_typ
         query += 'UPDATE ' + table + ' SET '
         for (i, col) in enumerate(cols_dict.keys()):
             if column_type[col] == 'int' or column_type[col] == 'bigint' or column_type[col] == 'double' or column_type[col] == 'decimal' :
-                query = query + col + ' = ' + str(condition_dict[col])
+                query = query + col + ' = ' + str(cols_dict[col])
             else:
-                query = query + col + " = '" + condition_dict[col] + "'"
+                query = query + col + " = '" + cols_dict[col] + "'"
                 
             if i< length-1 :
                 query += ', '

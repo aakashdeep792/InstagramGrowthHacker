@@ -2,22 +2,23 @@
 <html>
 <body>
 
-<h2>HTML Forms</h2>
+<h2>Edit profile</h2>
 
 <form action=""  method="post" >
-  First name:<br>
+  First name:
   <input type="text" name="email" value="{{user_details['email']}}" readonly>
   <br>
-  <input type="text" name="name" value="{{user_details['name']}}">
+  Name:<input type="text" name="name" value="{{user_details['name']}}">  
   <br>
-  <input type="text" name="dob" value="{{user_details['dob']}}">
-  Last name:<br>
-  <input type="text" name="hobby" value="{{user_details['hobby']}}">
+  Dob:<input type="text" name="dob" value="{{user_details['dob']}}"> { YYYY-MM-DD }
+  <br>
+  Hobby<input type="text" name="hobby" value="{{user_details['hobby']}}">
   <br><br>
-  <input type="submit" value="Submit">
+  <input type="submit" value="update">
 </form> 
-
-<p>If you click the "Submit" button, the form-data will be sent to a page called "/action_page.php".</p>
+{% if message %}
+    {{ user_details['name'] }} profile is  {{ message }}
+      {% endif %}
 
 </body>
 </html>

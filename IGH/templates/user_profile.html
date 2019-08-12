@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>User Profile</h2>
+user: {{ user_details['name'] }}
+<form action=""  method="post" >
+  <br>
+  Email: <input type="text" name="email" value="{{user_details['email']}}" readonly>
+  <br>
+  Name: <input type="text" name="name" value="{{user_details['name']}}" readonly>
+  <br>
+  Dob: <input type="text" name="dob" value="{{user_details['dob']}}" readonly>
+  <br>
+  Hobby<input type="text" name="hobby" value="{{user_details['hobby']}}" readonly>
+  <br><br>
+  <div>
+  <input type="submit" name = 'action' value="update">
+  <input type="submit" name = 'action' value="delete">
+  <input type="submit" name = 'action' value="update_credential">
+  </div>
+</form> 
+
+{% if error %}
+        <p class="error"><strong>Error:</strong> {{ error }}
+{% endif %}
+</body>
+</html>
+

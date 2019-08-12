@@ -17,7 +17,7 @@
 
 {% for user_details in user_details_list %}
 <div>
-<form action="/delete_user"  method="post" >
+<form action="{{ url_for('user_profile', email = user_details['email'] ) }}"  method="GET" >
   
   <input type="text" name="email" value="{{user_details['email']}}" readonly>
   
@@ -27,12 +27,14 @@
   
   <input type="text" name="hobby" value="{{user_details['hobby']}}"readonly>
   
-  <input type="submit" value="Delete">
+  <input type="submit" value="Edit">
 </form>
 </div> 
 {% endfor %}
 
+{% if error %}
 <p>If you click the "Submit" button, the form-data will be sent to a page called "/action_page.php".</p>
+{% endif %}
 
 </body>
 </html>
