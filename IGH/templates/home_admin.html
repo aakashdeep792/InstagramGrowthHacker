@@ -19,7 +19,7 @@
          Create new user:
         <input class="btn btn-default" type="submit" value="create_user" >
       </form>
-      <form action="{{ url_for('edit_profile', email=email ) }}" method="post">
+      <form action="{{ url_for('edit_profile', email = email ) }}" method="GET">
          Edit your profile:
         <input class="btn btn-default" type="submit" value="edit_profile">
       </form>

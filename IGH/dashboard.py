@@ -47,7 +47,7 @@ def init():
     #session['table_names_var'] = table_names
     #session['table_cols_dist_var'] = table_cols_dist
     print("-------------------------")
-    print(table_names,table_cols_dist)
+    #print(table_names,table_cols_dist)
    
     #cursor.close()
     #conn.close()
@@ -55,7 +55,13 @@ def init():
 
 
     
-
+def modify_dict(input_dict,remove_dict):
+    result={}
+    for keys in input_dict.keys():
+        if keys not in remove_dict.keys():
+            result[keys]=input_dict[keys]
+    print(result)      
+    return result
 
 @app.route('/rough' , methods=['GET', 'POST'])
 def rough():
@@ -258,8 +264,8 @@ def user_profile(email):
                 return redirect(url_for('edit_profile',email=email) )#### here recived email value is encode to remove the encode use email.encode('ascii')
             elif request.form['action'] == 'delete':
                 return redirect(url_for('delete_profile',email= email))
-            elif request.form['action'] == 'update_credential':
-                return redirect(url_for('update_credential',email= email)) ####
+            elif request.form['action'] == 'edit_credential':
+                return redirect(url_for('edit_credential',email= email)) ####
         else: 
             error="Unauthorized action"
 
@@ -356,6 +362,61 @@ def delete_profile(email):
         if session['email'] == email:
             return redirect(url_for('logout'))
     return redirect(url_for('login')) # it will redirect to login and there it verify if user is logged in, if logged in then it will redirect to home page
+
+#######################################################
+##   edit Credential
+#######################################################
+
+@app.route('/edit_credential/<email>', methods=['GET', 'POST'])#controller
+def edit_credential(email):
+    #print(email,'-----------------------')
+    
+    #email=str(email)
+    error =''
+    table= 'User_Credentials'
+    condition_dict={}
+    db = mysql.connection
+    cur= db.cursor()
+    cols_dict= table_cols_dist[table]
+    if 'email' not in session:
+        redirect(url_for('login'))
+    
+    if session['privilege'] == 'admin' or session['email'] == email : # work for both admin and guest
+        
+        if request.method == 'POST':
+            #print(request.form.keys())
+            
+            if request.form['password'] == request.form['confirmpassword']:
+                remove_dict={}
+            	remove_dict['confirmpassword']=request.form['confirmpassword']
+            	value_dict = modify_dict( request.form, remove_dict)
+
+            	#cols_dict= table_cols_dist[table]
+            	condition_dict['email']= email
+            	print(cols_dict)
+            	query= generate_sql_query(value_dict, condition_dict,'UPDATE', table, cols_dict)
+            	print(query)
+            	cur.execute(query)
+            	db.commit()
+            	return redirect(url_for('login'))
+            
+
+        # get req load data in the html page when loading
+        #cols_dict= table_cols_dist[table]
+        condition_dict['email']= email
+        query= generate_sql_query(cols_dict, condition_dict,'SELECT', table, cols_dict)
+        cur.execute(query)
+        user_detail=cur.fetchone()
+        print(user_detail)
+            
+        return render_template('edit_credential.html',email= email,details= user_detail, privilege=session['privilege']) #view
+        
+    else: 
+        error="Unauthorized action"
+        return redirect(url_for('login'))
+    
+ 
+   
 
 
 @app.route('/add_insta_profile', methods=['GET', 'POST'])#controller
