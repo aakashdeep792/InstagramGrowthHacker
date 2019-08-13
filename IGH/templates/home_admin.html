@@ -8,6 +8,16 @@
   <body>
     <div class="container">
        <h1>IGH</h1>
+
+     <div>
+      <br>
+         <form action="{{ url_for('logout') }}" >
+         For logout click here
+        <input class="btn btn-default" type="submit" value="logout">
+      </form>
+      <br>
+	</div>
+
       <br>
       Hello, {{email}}
 

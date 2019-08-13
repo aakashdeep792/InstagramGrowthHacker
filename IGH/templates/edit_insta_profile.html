@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>Edit profile</h2>
+
+<form action=""  method="post" >
+   Insta Id*:<input type="text" name="insta_id" value="{{user_details['insta_id']}}" >
+  <br>
+  Name:<input type="text" name="name" value="{{user_details['name']}}" >
+  <br>
+  Password*:<input type="password" name="password" value="{{user_details['password']}}" >
+  <br>
+  Hash_tags:<input type="text" name="hash_tags" value="{{user_details['hash_tags']}}" >
+  <br>
+  Max_posts*:<input type="text" name="max_posts" value="{{user_details['max_posts']}}" >
+  <br>
+  Current Post Id*:<input type="text" name="curr_post" value="{{user_details['curr_post']}}" >
+  <br>
+  Created By:<input type="text" name="creator" value="{{user_details['creator']}}" readonly>
+  
+  <br><br>
+  <input type="submit" value="update">
+</form> 
+{% if message %}
+    {{ user_details['name'] }} profile is  {{ message }}
+      {% endif %}
+
+</body>
+</html>
+

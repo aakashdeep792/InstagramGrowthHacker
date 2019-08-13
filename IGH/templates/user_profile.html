@@ -3,6 +3,17 @@
 <body>
 
 <h2>User Profile</h2>
+
+<div>
+      <br>
+         <form action="{{ url_for('logout') }}" >
+         For logout click here
+        <input class="btn btn-default" type="submit" value="logout">
+      </form>
+      <br>
+	</div>
+
+
 user: {{ user_details['name'] }}
 <form action=""  method="post" >
   <br>

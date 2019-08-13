@@ -1,0 +1,53 @@
+!DOCTYPE html>
+<html>
+  <head>
+    <title>IGH - login page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="static/bootstrap.min.css" rel="stylesheet" media="screen">
+  </head>
+  <body>
+    <div class="container">
+       <h1>Instagram Growth Hacker</h1>
+      <div>
+      about product and product details
+      </div>      
+      <br>
+{% if status== 'false' %}
+	<div>
+         <form action="{{ url_for('login') }}" >
+         For log in click here
+        <input class="btn btn-default" type="submit" value="Login">
+      </form>
+	</div>
+{% endif %}
+
+{% if status== 'true' %}
+       <div>
+         <form action="{{ url_for('login') }}" >
+         For log in click here
+        <input class="btn btn-default" type="submit" value="home">
+      </form>
+	</div>
+
+
+       <div>
+         <form action="{{ url_for('logout') }}" >
+         For logout click here
+        <input class="btn btn-default" type="submit" value="logout">
+      </form>
+	</div>
+
+{% endif %}
+      <div>
+      creator :
+      <br> Aakash Deep
+      <br> Saurav Kumar
+      </div>
+      
+      {% if error %}
+        <p class="error"><strong>Error:</strong> {{ error }}
+      {% endif %} 
+    </div>
+  </body>
+</html>
+

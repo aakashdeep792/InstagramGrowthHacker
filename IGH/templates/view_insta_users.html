@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>Instagram User Details</h2>
+<form action=""  method="post" >
+  
+  <input type="text" name="insta_id" value="Insta_id" readonly>
+  
+  <input type="text" name="name" value="Name" readonly>
+  
+  <input type="text" name="password" value="Password" readonly>
+  
+  <input type="text" name="hash_tags" value="Hash Tag" readonly>
+
+  <input type="text" name="max_posts" value="Max Post" readonly>
+
+  <input type="text" name="curr_post" value="Current Post Id" readonly>
+  <input type="text" name="creator" value="Creator By" readonly>
+  
+</form> 
+
+{% for user_details in user_details_list %}
+<div>
+<form action="{{ url_for('insta_user_profile',table='Insta_User_Details',insta_id = user_details['insta_id'] ) }}"  >
+  
+  <input type="text" name="insta_id" value="{{user_details['insta_id']}}" readonly>
+  
+  <input type="text" name="name" value="{{user_details['name']}}" readonly>
+  
+  <input type="text" name="password" value="{{user_details['password']}}" readonly>
+  
+  <input type="text" name="hash_tags" value="{{user_details['hash_tags']}}"readonly>
+
+  <input type="text" name="max_posts" value="{{user_details['max_posts']}}" readonly>
+  
+  <input type="text" name="curr_post" value="{{user_details['curr_post']}}"readonly>
+
+  <input type="text" name="creator" value="{{user_details['creator']}}"readonly>
+  
+  <input type="submit" value="Edit">
+</form>
+</div> 
+{% endfor %}
+
+{% if error %}
+<p>If you click the "Submit" button, the form-data will be sent to a page called "/action_page.php".</p>
+{% endif %}
+
+</body>
+</html>
+

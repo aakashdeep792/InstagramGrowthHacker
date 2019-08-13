@@ -9,15 +9,26 @@
     <div class="container">
        <h1>IGH</h1>
       <br>
+     
+      <div>
+      <br>
+         <form action="{{ url_for('logout') }}" >
+         For logout click here
+        <input class="btn btn-default" type="submit" value="logout">
+      </form>
+      <br>
+	</div>
+
+
       Hello, {{email}}
 
-      <form action="{{ url_for('view_users') }}" >
+      <form action="{{ url_for('view_insta_users') }}" >
          Check existing instagram user list:
         <input class="btn btn-default" type="submit" value="View_users">
       </form>
-      <form action="{{ url_for('create_new_user') }}" method="GET">
+      <form action="{{ url_for('add_insta_user') }}" method="GET">
          Add new instagram user:
-        <input class="btn btn-default" type="submit" value="create_user" >
+        <input class="btn btn-default" type="submit" value="add_insta_user" >
       </form>
       <form action="{{ url_for('edit_profile', email = email ) }}" method="GET">
          Edit your profile:

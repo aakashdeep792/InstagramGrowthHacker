@@ -47,7 +47,7 @@ def init():
     #session['table_names_var'] = table_names
     #session['table_cols_dist_var'] = table_cols_dist
     print("-------------------------")
-    #print(table_names,table_cols_dist)
+    print(table_names,table_cols_dist)
    
     #cursor.close()
     #conn.close()
@@ -63,27 +63,14 @@ def modify_dict(input_dict,remove_dict):
     print(result)      
     return result
 
-@app.route('/rough' , methods=['GET', 'POST'])
-def rough():
-    cur = mysql.connection.cursor()
-    #cur.execute("SELECT table_name FROM information_schema.tables WHERE table_schema='IGH_DATABASE' ")
-    cur.execute("SELECT COLUMN_NAME, DATA_TYPE FROM information_schema.columns WHERE table_name='User_Credentials'")
-    #cur.execute("SELECT * FROM User_Credentials")
-    tables = cur.fetchall()
-    print (tables)
-    #print(len(table_names))
-    #print(request.form)
-    
-    #return str(len(tables))
-    #return str(table_cols_dist[ table_names[0] ][0])
-    #return str(len(table_names))
-    if request.method == 'POST':
-        print("-------------------------")
-        print(request.form.values())
-        print("assdd")
+@app.route('/')
+def index():
+    if 'email' in session:
+        status='true'
     else:
-        #insta_details={'insta_id':'aa@gmail.com','user'='aakash','pass':'pass','hash_tags':'dance, sleep','max_post':4}
-        return render_template('rough.html')
+        status='false'
+    return render_template('index.html', status =status)
+    
 
 
 
@@ -433,46 +420,178 @@ def home():
         print("hello")
 
     else:  # get req load data in the html page when loading
-        #user_details={'email':'aa@gmail.com','name':'aakash','dob':'12-10-1995','hobby':'anime'}
         return render_template('home.html', email = session['email']) #view
-  
 
 
-@app.route('/add_insta_profile', methods=['GET', 'POST'])#controller
-def add_insta_profie():
-    
-    if request.method == 'POST':
-        print(request.form.keys())
+#######################################################################
+###        Veiw Insta users
+#######################################################################
+@app.route('/view_insta_users', methods=['GET', 'POST'])#controller
+def view_insta_users():
+    if session['privilege'] == 'guest':
+    #if request.method == 'POST':
+        table= 'Insta_User_Details'
+        condition_dict={}
+        condition_dict['creator']= session['email']
+        cols_dict=table_cols_dist[table]
+        cur = mysql.connection.cursor()
+        query= generate_sql_query(cols_dict,condition_dict,'SELECT', table , cols_dict)
+        cur.execute(query)
+        user_details= cur.fetchall()      
+        return render_template('view_insta_users.html',user_details_list= user_details) #view
     else:
-        #insta_details={'insta_id':'aa@gmail.com','user'='aakash','pass':'pass','hash_tags':'dance, sleep','max_post':4}
-        return render_template('add_insta_profile.html')
-
-
-@app.route('/edit_insta_profile', methods=['GET', 'POST'])#controller
-def edit_insta_profie():
+        return redirect(url_for('login'))
     
-    if request.method == 'POST':
-        print(request.form.keys())
+#######################################################################
+###       Insta users profile
+#######################################################################
+
+@app.route('/insta_user_profile/<table>/<insta_id>', methods=['GET', 'POST'])#controller
+def insta_user_profile(table,insta_id):
+    #verify login:
+    if 'email' not in session:
+        return redirect(url_for('login'))
+
+    if session['privilege'] == 'guest':
+	    # user profie section
+        error =''
+        
+        condition_dict={}
+        cur = mysql.connection.cursor()
+        if request.method == 'POST' : 
+            
+            #print('----------update--------',email , session['email'] )
+            if request.form['action'] == 'update':
+                return redirect(url_for('edit_insta_profile',insta_id=insta_id) )#### here recived email value is encode to remove the encode use email.encode('ascii')
+            elif request.form['action'] == 'delete':
+                return redirect(url_for('delete_insta_profile',insta_id= insta_id))
+                
+          
+
+        # get req load data in the html page when loading
+        cols_dict= table_cols_dist[table]
+        condition_dict['insta_id']=insta_id
+        print('------------------',condition_dict['insta_id'])
+        query= generate_sql_query(cols_dict, condition_dict,'SELECT', table, cols_dict)
+        cur.execute(query)
+        user_detail=cur.fetchone()
+        print(user_detail)
+        #user_details={'email':'aa@gmail.com','name':'aakash','dob':'12-10-1995','hobby':'anime'}
+        return render_template('insta_user_profile.html',user_details= user_detail,error = error) #view
     else:
-        insta_details={'insta_id':'aa@gmail.com','user':'aakash','pass':'pass','hash_tags':'dance, sleep','max_post':4}
-        return render_template('edit_profile.html',user_details= insta_details)
+        return redirect(url_for('login'))
+##############################################################################
+###        edit insta profile
+##############################################################################
 
+
+@app.route('/edit_insta_profile/<insta_id>', methods=['GET', 'POST'])#controller
+def edit_insta_profile(insta_id):
+    #print(email,'-----------------------')
     
-    #return render_template('update_user_profile.html', error=error)
+    #email=str(email)
+    error =''
+    table= 'Insta_User_Details'
+    condition_dict={}
+    db = mysql.connection
+    cur= db.cursor()
+    if 'email' not in session:
+        redirect(url_for('login'))
+    
+    if session['privilege'] == 'guest':
+        
+        if request.method == 'POST':
+            #print(request.form.keys())
+            cols_dict= table_cols_dist[table]
+            condition_dict['insta_id']= insta_id
+            query= generate_sql_query(request.form, condition_dict,'UPDATE', table, cols_dict)
+            print(query)
+            cur.execute(query)
+            db.commit()
+            return redirect(url_for('insta_user_profile',table='Insta_User_Details', insta_id=insta_id))
+            
 
+        # get req load data in the html page when loading
+        cols_dict= table_cols_dist[table]
+        condition_dict['insta_id']= insta_id
+        query= generate_sql_query(cols_dict, condition_dict,'SELECT', table, cols_dict)
+        cur.execute(query)
+        user_detail=cur.fetchone()
+        print(user_detail)
+            
+        return render_template('edit_insta_profile.html',insta_id= insta_id,user_details= user_detail) #view
+        
+    else: 
+        error="Unauthorized action"
+        return redirect(url_for('login'))
 
-# wget http://127.0.0.1:5000/add_todos\?name\=raj\&todo\=play_cricket
+####################################################################
+###       Delete Instagram Profile
+####################################################################
 
+@app.route('/delete_insta_profile/<insta_id>', methods=['GET', 'POST'])#view
+def delete_insta_profile(insta_id):#view
+    if 'email' not in session:
+        redirect(url_for('login'))
+   
+    if session['privilege'] == 'guest':
+        table= 'Insta_User_Details'
+        
+        condition_dict={}
+        condition_dict['insta_id']= insta_id
+        db = mysql.connection
+        cur= db.cursor()
+        print("-------------delete--------------")
+        try:
+            query= generate_sql_query({}, condition_dict,'DELETE', table, table_cols_dist['Insta_User_Details'])
+            print(query,'-------------')
+            cur.execute(query)
+            
+            db.commit()
+            print('User deleted Sucessfully')
+        except:
+            print('flash no such entry exist')
+            
+        
+        
+    return redirect(url_for('view_insta_users')) # it will redirect to login and there it verify if user is logged in, if logged in then it will redirect to home page
+    
+####################################################################
+###       Add Instagram User
+#################################################################### 
 
-@app.route('/create_user')
-def create_user():
-    name=request.args.get('name')
-    todo=request.args.get('todo')
-    add_todos_by_name(name,todo)
-    return 'added sucessfully'
+@app.route('/add_insta_user', methods=['GET', 'POST'])#controller
 
+def add_insta_user():
+    error = None
+    value_dict={}
+    db = mysql.connection
+    cur= db.cursor()
+    table='Insta_User_Details'
+    #table='User_Credentials'
+    if 'email' in session:
+        if session['privilege'] == 'admin':
+            #return render_template('home_admin.html')
+            return redirect(url_for('home_admin')) #using redirect also udate the url
+    else:   
+         return redirect(url_for('login'))
 
-
+    if request.method == 'POST':
+        # for User_Credential table
+        cols_dict=table_cols_dist[table]
+        query= generate_sql_query(request.form,{},'INSERT', table, cols_dict)
+        print('-------------------------------------')
+        cur.execute(query)
+        db.commit()
+        return redirect( url_for('insta_user_profile',table=table, insta_id= request.form['insta_id'] ) ) ###### parameter in url
+        
+        
+    
+    return render_template('add_insta_user.html',email=session['email'])
+    #return redirect(url_for('create_new_user'))
+####################################################################
+###       Main
+#################################################################### 
 
 
 if __name__ == "__main__":

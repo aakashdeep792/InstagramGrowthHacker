@@ -16,6 +16,35 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `Insta_User_Details`
+--
+
+DROP TABLE IF EXISTS `Insta_User_Details`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Insta_User_Details` (
+  `insta_id` varchar(50) NOT NULL,
+  `name` varchar(100) DEFAULT NULL,
+  `password` varchar(50) DEFAULT NULL,
+  `hash_tags` varchar(5000) DEFAULT NULL,
+  `max_posts` int(11) DEFAULT NULL,
+  `curr_post` int(11) DEFAULT NULL,
+  `creator` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`insta_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Insta_User_Details`
+--
+
+LOCK TABLES `Insta_User_Details` WRITE;
+/*!40000 ALTER TABLE `Insta_User_Details` DISABLE KEYS */;
+INSERT INTO `Insta_User_Details` VALUES ('holmes010','sherloc','pass','anime, manga',10,1121,'ru@r.r'),('insta10','aakk',NULL,NULL,NULL,NULL,'sami@iit.com'),('insta11','aahjhdkk',NULL,NULL,NULL,NULL,'sami@iit.com'),('insta14','aadnjhj','None','dance',22,1234,'ru@r.r');
+/*!40000 ALTER TABLE `Insta_User_Details` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `User_Credentials`
 --
 
@@ -36,7 +65,7 @@ CREATE TABLE `User_Credentials` (
 
 LOCK TABLES `User_Credentials` WRITE;
 /*!40000 ALTER TABLE `User_Credentials` DISABLE KEYS */;
-INSERT INTO `User_Credentials` VALUES ('abc@gmail.com','admin','guest'),('lll@g.in','  ','admin'),('ram@gmail.com','admin','admin'),('sam@iit.com','iit','guest'),('sami@iit.com','iit','guest'),('ss@a.in','admin','admin'),('uu@o.in','admin','admin');
+INSERT INTO `User_Credentials` VALUES ('abc@gmail.com','admin','guest'),('lll@g.in','  ','admin'),('ram@gmail.com','aaa','admin'),('ru@r.r','  ','guest'),('sam@iit.com','iit','guest'),('sami@iit.com','iit','guest'),('ss@a.in','admin','admin'),('uu@o.in','admin','admin');
 /*!40000 ALTER TABLE `User_Credentials` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -62,7 +91,7 @@ CREATE TABLE `User_Details` (
 
 LOCK TABLES `User_Details` WRITE;
 /*!40000 ALTER TABLE `User_Details` DISABLE KEYS */;
-INSERT INTO `User_Details` VALUES ('aa@gmail.com','None','2000-10-10','None'),('lll@g.in','None','1999-01-01','None');
+INSERT INTO `User_Details` VALUES ('aa@gmail.com','None','2000-10-10','None'),('lll@g.in','None','1999-01-01','None'),('ru@r.r','None','2000-01-01','None');
 /*!40000 ALTER TABLE `User_Details` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -75,4 +104,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-08-12  1:52:46
+-- Dump completed on 2019-08-13  3:33:19
